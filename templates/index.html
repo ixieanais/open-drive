@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', path='/dfavicon.ico') }}" type="image/x-icon" media="(prefers-color-scheme: light)">
+    <link rel="shortcut icon" href="{{ url_for('static', path='/lfavicon.ico') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <title>Hard Cloud</title>
+</head>
+<body>
+    <div class="data-div" data-folder-id="{{ current_folder.id }}" data-folder-path="{{ current_folder.path }}" data-disk-usage="{{ disk_usage }}"></div>
+    <div class="header-wrapper">
+        <div class="header-container">
+            <div class="search-wrapper">
+                <input type="text" class="path-input">
+            </div>
+            <!-- <button class="add-item-button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                    <path d="M427-427H233.78q-22.08 0-37.54-15.46-15.46-15.45-15.46-37.54t15.46-37.54Q211.7-533 233.78-533H427v-193.22q0-22.08 15.46-37.54 15.45-15.46 37.54-15.46t37.54 15.46Q533-748.3 533-726.22V-533h193.22q22.08 0 37.54 15.46 15.46 15.45 15.46 37.54t-15.46 37.54Q748.3-427 726.22-427H533v193.22q0 22.08-15.46 37.54-15.45 15.46-37.54 15.46t-37.54-15.46Q427-211.7 427-233.78V-427Z"/>
+                </svg>
+            </button> -->
+        </div>
+    </div>
+    <div class="main-wrapper">
+        <div class="side-bar-wrapper">
+            <div class="side-bar-container">
+                <div class="general-buttons-wrapper">
+                    <button id="home-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                            <path d="M246.78-206.78H347V-400q0-22.09 15.46-37.54Q377.91-453 400-453h160q22.09 0 37.54 15.46Q613-422.09 613-400v193.22h100.22v-349.83L480-731.52 246.78-556.61v349.83Zm-106 0v-349.83q0-25.08 11.05-47.52 11.04-22.44 31.13-37.39l233.21-174.92q28.35-21.65 63.83-21.65t63.83 21.65l233.21 174.92q20.09 14.95 31.13 37.39 11.05 22.44 11.05 47.52v349.83q0 44.3-30.85 75.15-30.85 30.85-75.15 30.85H568.48q-22.09 0-37.55-15.46-15.45-15.46-15.45-37.54v-201.7h-70.96v201.7q0 22.08-15.45 37.54-15.46 15.46-37.55 15.46H246.78q-44.3 0-75.15-30.85-30.85-30.85-30.85-75.15ZM480-469.43Z"/>
+                        </svg>
+                        <span>Home</span>
+                    </button>
+                </div>
+                <div class="side-bar-line"></div>
+                <!-- <div class="pinned-buttons-wrapper">
+
+                </div> -->
+                <div class="disk-wrapper">
+                    <div class="disk-container">
+                        <div class="disk-bar">
+                            <div class="disk-progress"></div>
+                        </div>
+                        <div class="disk-text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="storage-wrapper">
+            <div class="grid-wrapper">
+                <div class="grid-container">
+                    {% if folders %}
+                    <div class="folders-grid">
+                        {% if current_folder.parent_id is not none %}
+                        <div class="item folders" data-id="{{ current_folder.parent_id if not parent_folder_is_main else 'home' }}" data-item-type="folder">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#789DE5">
+                                <path d="M166.78-140.78q-44.3 0-75.15-30.85-30.85-30.85-30.85-75.15v-466.44q0-44.3 30.85-75.15 30.85-30.85 75.15-30.85h224.74L480-730.74h313.22q44.3 0 75.15 30.85 30.85 30.85 30.85 75.15v377.96q0 44.3-30.85 75.15-30.85 30.85-75.15 30.85H166.78Z"/>
+                            </svg>
+                            <span>..</span>
+                        </div>
+                        {% endif %}
+
+                        {% for folder in folders %}
+                        <div class="item folders" data-id="{{ folder.id }}" data-item-type="folder">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#789DE5">
+                                <path d="M166.78-140.78q-44.3 0-75.15-30.85-30.85-30.85-30.85-75.15v-466.44q0-44.3 30.85-75.15 30.85-30.85 75.15-30.85h224.74L480-730.74h313.22q44.3 0 75.15 30.85 30.85 30.85 30.85 75.15v377.96q0 44.3-30.85 75.15-30.85 30.85-75.15 30.85H166.78Z"/>
+                            </svg>
+                            <span>{{ folder.path.split("/")[-1] }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {% if current_folder.parent_id is not none %}
+                    <div class="folders-grid">
+                        <div class="item folders" data-id="{{ current_folder.parent_id if not parent_folder_is_main else 'home' }}" data-item-type="folder">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#789DE5">
+                                <path d="M166.78-140.78q-44.3 0-75.15-30.85-30.85-30.85-30.85-75.15v-466.44q0-44.3 30.85-75.15 30.85-30.85 75.15-30.85h224.74L480-730.74h313.22q44.3 0 75.15 30.85 30.85 30.85 30.85 75.15v377.96q0 44.3-30.85 75.15-30.85 30.85-75.15 30.85H166.78Z"/>
+                            </svg>
+                            <span>..</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if files %}
+                    <div class="files-grid">
+                        {% for file in files %}
+                        <div class="item files" data-id="{{ file.id }}" data-size="{{ file.size }}" data-mime-type="{{ file.mime_type }}" data-item-type="file">
+                            {% if "image/" in file.mime_type %}
+                                <div class="image-container">
+                                    <img src="/api/files/{{ file.id }}" alt="" draggable="false">
+                                </div>
+                            {% else %}
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
+                                    <path d="M360-440h240q17 0 28.5-11.5T640-480q0-17-11.5-28.5T600-520H360q-17 0-28.5 11.5T320-480q0 17 11.5 28.5T360-440Zm0 120h240q17 0 28.5-11.5T640-360q0-17-11.5-28.5T600-400H360q-17 0-28.5 11.5T320-360q0 17 11.5 28.5T360-320Zm0 120h120q17 0 28.5-11.5T520-240q0-17-11.5-28.5T480-280H360q-17 0-28.5 11.5T320-240q0 17 11.5 28.5T360-200ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v447q0 33-23.5 56.5T720-80H240Zm280-560q0 17 11.5 28.5T560-600h160L520-800v160Z"/>
+                                </svg>
+                            {% endif %}
+                            <span>{{ file.filename }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="background-wrapper">
+        <div class="background-container"></div>
+    </div>
+    <div id="grid-context-menu" class="context-menu">
+        <input type="file" id="fileInput" multiple hidden>
+        <label for="fileInput" class="context-item">Upload Files</label>
+        <div class="context-item" data-action="create-folder">Create Folder</div>
+        <div class="context-item" data-action="properties">Properties</div>
+    </div>
+    <div id="files-context-menu" class="context-menu">
+        <div class="context-item" data-action="download">Download</div>
+        <!-- <div class="context-item" data-action="move">Move to</div> -->
+        <div class="context-item" data-action="rename">Rename</div>
+        <div class="context-item" data-action="delete">Delete</div>
+        <div class="context-item" data-action="properties">Properties</div>
+    </div>
+    <div id="folders-context-menu" class="context-menu">
+        <div class="context-item" data-action="download">Download</div>
+        <!-- <div class="context-item" data-action="favorites">Add to favorites</div> -->
+        <div class="context-item" data-action="rename">Rename</div>
+        <!-- <div class="context-item" data-action="move">Move to</div> -->
+        <div class="context-item" data-action="delete">Delete</div>
+        <div class="context-item" data-action="properties">Properties</div>
+    </div>
+    <div class="dialog-wrapper">
+        <div class="dialog-window"></div>
+    </div>
+    <!-- <div class="properties-wrapper">
+        <div class="properties-window">
+            <span class="folder-name">${file.filename}</span>
+            <span class="folder-span-info"></span>
+            <div class="folder-info">
+                <div class="folder-item">
+                    <span class="folder-item-span">Parent Folder</span>
+                    <span>${dataDiv.dataset.folderPath + "/"}</span>
+                </div>
+                <div class="folder-item">
+                    <span class="folder-item-span">Updated</span>
+                    <span>${file.updated_at}</span>
+                </div>
+                <div class="folder-item">
+                    <span class="folder-item-span">Created</span>
+                    <span>${file.created_at}</span>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <script src="{{ url_for('static', path='/js/api.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/search.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/storage.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/main.js') }}"></script>
+</body>
+</html>
