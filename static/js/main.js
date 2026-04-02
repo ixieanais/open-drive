@@ -10,7 +10,7 @@ function renderDiskUsage() {
     document.querySelector(".disk-progress").style.width = diskUsagePercent + "%";
 
     const diskText = document.querySelector(".disk-text");
-    diskText.textContent = `${formatBytes(diskUsage.used)} / ${formatBytes(diskUsage.total)} (${diskUsagePercent.toFixed(1)}%)`;
+    diskText.textContent = `${formatBytes(String(diskUsage.used))} / ${formatBytes(diskUsage.total)} (${diskUsagePercent.toFixed(1)}%)`;
 }
 
 
