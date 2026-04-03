@@ -52,8 +52,8 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
             )
 
             async with aiofiles.open(config.STORAGE_DIR / file_id, "wb") as f:
-                content = await file.read()
-                await f.write(content)
+                while chunk := await file.read(1024 * 1024):
+                    await f.write(chunk)
 
         except IntegrityError:
             raise HTTPException(
