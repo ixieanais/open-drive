@@ -221,6 +221,7 @@ a {
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    position: relative;
 }
 
 .grid-container .selected {
@@ -237,6 +238,15 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+.item svg.preview {
+    position: absolute;
+    bottom: 0;
+    left: 90%;
+    min-width: 24px !important;
+    min-height: 24px !important;
 }
 
 .grid-container .item img {
