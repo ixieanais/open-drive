@@ -24,15 +24,6 @@ async function uploadFile(folderId, formData) {
     xhr.send(formData)
 
     return xhr.status;
-
-
-
-    // const response = await fetch(`/api/folders/${folderId}/files`, {
-    //     method: "POST",
-    //     body: formData
-    // });
-
-    // return await response.json();
 }
 
 // async function getFiles(folderId) {
@@ -77,7 +68,7 @@ async function getFileMetadata(fileId) {
     return await response.json();
 }
 
-async function updateFile(fileId, name) {
+async function updateFilename(fileId, name) {
     const response = await fetch(`/api/files/${fileId}`, {
         method: "PATCH",
         headers: {
@@ -86,6 +77,18 @@ async function updateFile(fileId, name) {
         body: JSON.stringify({name: name})
     });
     return response.status;
+}
+
+async function updateFileLocation(fileId, folderId) {
+    const response = await fetch(`/api/files/${fileId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({folder_id: folderId})
+    });
+
+    return response;
 }
 
 async function deleteFile(fileId) {
