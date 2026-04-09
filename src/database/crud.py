@@ -19,6 +19,7 @@ async def insert_file(
     mime_type: Optional[str],
     type: Optional[str],
     size: str,
+    preview: bool,
     folder_id: str,
 ):
     async with session_factory() as session:
@@ -28,6 +29,7 @@ async def insert_file(
             mime_type=mime_type,
             type=type,
             size=size,
+            preview=preview,
             folder_id=folder_id,
         )
         session.add(file)
