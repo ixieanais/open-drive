@@ -44,6 +44,9 @@ DB_PASSWORD=your_password
 
 Run the `main.py`, open browser and open the window with this link: http://localhost:8080
 
+> [!NOTE]
+> If you want to see a video preview, install ffmpeg
+
 # License
 
 Copyright © 2026 [ixieanais](https://github.com/ixieanais). <br>
