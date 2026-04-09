@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated
 
-from sqlalchemy import BigInteger, DateTime, ForeignKey, String, UniqueConstraint, func
+from sqlalchemy import BigInteger, DateTime, ForeignKey, String, Boolean, UniqueConstraint, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -36,6 +36,7 @@ class FilesOrm(Base):
     mime_type: Mapped[str | None] = mapped_column(String, nullable=True)
     type: Mapped[str | None] = mapped_column(String, nullable=True)
     size: Mapped[int] = mapped_column(BigInteger)
+    preview: Mapped[bool] = mapped_column(Boolean)
     folder_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("folders.id", ondelete="CASCADE"), primary_key=True
     )
