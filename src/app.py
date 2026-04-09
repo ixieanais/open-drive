@@ -45,31 +45,6 @@ async def home_page(request: Request):
     )
 
 
-# @app.get("/starred")
-# async def starred_page():
-#     pass
-
-
-# @app.get("/recent", tags=["pages"])
-# async def recent_page(request: Request):
-#     service = RecentService()
-#     return tempaltes.TemplateResponse(
-#         request=request,
-#         name="index.html",
-#         context=await service.get_context()
-#     )
-
-
-# @app.get("/graph")
-# async def graph_page():
-#     pass
-
-
-# @app.get("/trash")
-# async def trash_page():
-#     pass
-
-
 @app.get("/folders/{folder_id}", tags=["pages"])
 async def folder_page(request: Request, folder_id: str):
     if not await crud.is_folder_exists(folder_id):
