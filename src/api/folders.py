@@ -125,5 +125,8 @@ async def delete_folder(folder_id: str):
         file_path = config.STORAGE_DIR / file["id"]
         if file_path.exists():
             os.remove(file_path)
+            preview_path = config.STORAGE_DIR / f"{file['id']}.preview"
+            if preview_path.exists():
+                os.remove(preview_path)
 
     await crud.delete_folder(folder_id)
