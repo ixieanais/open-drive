@@ -267,6 +267,12 @@ function openDialogWindow(purpose) {
             yesButtonText = "Rename";
             inputValue = contextItem.querySelector("span").textContent;
             break;
+
+        case "move-file":
+            dialogSpanText = "Move file";
+            yesButtonText = "Move";
+            inputValue = dataDiv.dataset.folderPath;
+            break;
     }
 
     dialogWindow.dataset.purpose = purpose;
@@ -294,21 +300,19 @@ dialogWindow.addEventListener("click", async (e) => {
         case "yes":
             const purpose = dialogWindow.dataset.purpose;
             const dataFolderId = document.querySelector(".data-div").dataset.folderId;
-            let inputValue;
 
             switch (purpose) {
                 case "create-folder":
-                    const input = dialogWindow.querySelector("input");
-                    inputValue = input.value.trim();
+                    var inputValue = dialogWindow.querySelector("input").value.trim();
                     if (inputValue.length === 0) return;
                     if (inputValue === "..") return;
 
-                    const response = await createFolder(dataFolderId, inputValue);
+                    var response = await createFolder(dataFolderId, inputValue);
                     if (response.status !== 200) return alert("Error");
 
-                    const folderId = await response.json();
+                    var folderId = await response.json();
 
-                    const folder = document.createElement("div");
+                    var folder = document.createElement("div");
                     folder.className = "item folder";
                     folder.dataset.id = folderId;
                     folder.dataset.itemType = "folder";
@@ -319,7 +323,7 @@ dialogWindow.addEventListener("click", async (e) => {
                     try {
                         document.querySelector(".folders-grid").appendChild(folder);
                     } catch (error) {
-                        const foldersGrid = document.createElement("div");
+                        var foldersGrid = document.createElement("div");
                         foldersGrid.className = "folders-grid";
                         foldersGrid.appendChild(folder);
                         gridContainer.prepend(foldersGrid);
@@ -331,11 +335,11 @@ dialogWindow.addEventListener("click", async (e) => {
                     break;
 
                 case "rename-folder":
-                    inputValue = dialogWindow.querySelector("input").value.trim();
+                    var inputValue = dialogWindow.querySelector("input").value.trim();
                     if (inputValue.length === 0) return;
                     if (inputValue === "..") return;
 
-                    const folderStatus = await updateFolder(contextItem.dataset.id, inputValue);
+                    var folderStatus = await updateFolder(contextItem.dataset.id, inputValue);
                     if (folderStatus !== 200) return alert("Error");
 
                     contextItem.querySelector("span").textContent = inputValue;
@@ -343,13 +347,32 @@ dialogWindow.addEventListener("click", async (e) => {
                     break;
 
                 case "rename-file":
-                    inputValue = dialogWindow.querySelector("input").value.trim();
+                    var inputValue = dialogWindow.querySelector("input").value.trim();
                     if (inputValue.length === 0) return;
 
-                    const fileStatus = await updateFile(contextItem.dataset.id, inputValue);
+                    var fileStatus = await updateFilename(contextItem.dataset.id, inputValue);
                     if (fileStatus !== 200) return alert("Error");
 
                     contextItem.querySelector("span").textContent = inputValue;
+
+                    break;
+
+                case "move-file":
+                    var inputValue = dialogWindow.querySelector("input").value.trim();
+                    if (inputValue.length === 0) return;
+                    if (inputValue.at(-1) === "/") {
+                        inputValue = inputValue.slice(0, -1);
+                    }
+                    if (inputValue === dataDiv.dataset.folderPath) return;
+
+                    var folderResponse = await searchFolder(inputValue);
+                    if (folderResponse.status !== 200) return alert("This folder doesn't exist");
+
+                    var folder = await folderResponse.json();
+                    var response = await updateFileLocation(contextItem.dataset.id, folder.id);
+                    if (response.status !== 200) return alert("Error");
+
+                    location.reload();
 
                     break;
 
@@ -418,7 +441,7 @@ foldersContextMenu.addEventListener("click", async (e) => {
             const status = await deleteFolder(contextItem.dataset.id);
             if (status === 200) {
                 contextItem.remove();
-                const foldersGrid = document.querySelector(".folders-grid");
+                var foldersGrid = document.querySelector(".folders-grid");
                 if (foldersGrid) {
                     const items = foldersGrid.querySelectorAll(".item").length;
                     if (items === 0) {
@@ -475,7 +498,7 @@ async function openFile(file) {
         case "text":
             element = document.createElement("div");
             element.className = "background-div text-container";
-            const span = document.createElement("span");
+            var span = document.createElement("span");
             var content = await getFile(fileId);
             span.innerText = content;
             element.appendChild(span);
@@ -515,12 +538,16 @@ filesContextMenu.addEventListener("click", async (e) => {
             window.location.href = `/api/files/${filesContextMenu.dataset.id}/download`;
             break;
 
+        case "move":
+            openDialogWindow("move-file");
+            break;
+
         case "rename":
-            openDialogWindow("rename-file")
+            openDialogWindow("rename-file");
             break;
 
         case "delete":
-            const status = await deleteFile(filesContextMenu.dataset.id);
+            var status = await deleteFile(filesContextMenu.dataset.id);
             if (status === 200) {
                 contextItem.remove();
                 unrenderItemInformation();
