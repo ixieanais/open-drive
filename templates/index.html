@@ -15,11 +15,6 @@
             <div class="search-wrapper">
                 <input type="text" class="path-input">
             </div>
-            <!-- <button class="add-item-button">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-                    <path d="M427-427H233.78q-22.08 0-37.54-15.46-15.46-15.45-15.46-37.54t15.46-37.54Q211.7-533 233.78-533H427v-193.22q0-22.08 15.46-37.54 15.45-15.46 37.54-15.46t37.54 15.46Q533-748.3 533-726.22V-533h193.22q22.08 0 37.54 15.46 15.46 15.45 15.46 37.54t-15.46 37.54Q748.3-427 726.22-427H533v193.22q0 22.08-15.46 37.54-15.45 15.46-37.54 15.46t-37.54-15.46Q427-211.7 427-233.78V-427Z"/>
-                </svg>
-            </button> -->
         </div>
     </div>
     <div class="main-wrapper">
@@ -34,9 +29,6 @@
                     </button>
                 </div>
                 <div class="side-bar-line"></div>
-                <!-- <div class="pinned-buttons-wrapper">
-
-                </div> -->
                 <div class="disk-wrapper">
                     <div class="disk-container">
                         <div class="disk-bar">
@@ -117,7 +109,7 @@
     </div>
     <div id="files-context-menu" class="context-menu">
         <div class="context-item" data-action="download">Download</div>
-        <!-- <div class="context-item" data-action="move">Move to</div> -->
+        <div class="context-item" data-action="move">Move to</div>
         <div class="context-item" data-action="rename">Rename</div>
         <div class="context-item" data-action="delete">Delete</div>
         <div class="context-item" data-action="properties">Properties</div>
@@ -133,26 +125,6 @@
     <div class="dialog-wrapper">
         <div class="dialog-window"></div>
     </div>
-    <!-- <div class="properties-wrapper">
-        <div class="properties-window">
-            <span class="folder-name">${file.filename}</span>
-            <span class="folder-span-info"></span>
-            <div class="folder-info">
-                <div class="folder-item">
-                    <span class="folder-item-span">Parent Folder</span>
-                    <span>${dataDiv.dataset.folderPath + "/"}</span>
-                </div>
-                <div class="folder-item">
-                    <span class="folder-item-span">Updated</span>
-                    <span>${file.updated_at}</span>
-                </div>
-                <div class="folder-item">
-                    <span class="folder-item-span">Created</span>
-                    <span>${file.created_at}</span>
-                </div>
-            </div>
-        </div>
-    </div> -->
     <script src="{{ url_for('static', path='/js/api.js') }}"></script>
     <script src="{{ url_for('static', path='/js/search.js') }}"></script>
     <script src="{{ url_for('static', path='/js/storage.js') }}"></script>
