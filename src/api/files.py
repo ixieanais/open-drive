@@ -1,4 +1,5 @@
 import os
+import subprocess
 from uuid import uuid4
 
 import aiofiles
@@ -6,6 +7,7 @@ from fastapi import APIRouter, File, UploadFile, status
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse
 from sqlalchemy.exc import IntegrityError, NoResultFound
+from PIL import Image
 
 import config
 from database import crud
@@ -20,14 +22,39 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
     for file in files:
         file_id = str(uuid4())
         mime_type = file.content_type
+        preview_exists = False
 
         try:
             async with aiofiles.open(config.STORAGE_DIR / file_id, "wb") as f:
                 while chunk := await file.read(1024 * 1024):
                     await f.write(chunk)
 
+            if mime_type.startswith("image/"):
+                preview_exists = True
+                with Image.open(config.STORAGE_DIR / file_id) as img:
+                    img.thumbnail((512, 512))
+                    if img.mode in ("RGBA", "P"):
+                        img = img.convert("RGB")
+                    img.save(config.STORAGE_DIR / f"{file_id}.preview", format="JPEG", quality=70)
+
+            elif mime_type.startswith("video/"):
+                cmd = [
+                    "ffmpeg",
+                    "-i", str(config.STORAGE_DIR / file_id),
+                    "-ss", "00:00:0.000",
+                    "-vframes", "1",
+                    "-vf", "scale=300:-1",
+                    str(config.STORAGE_DIR / f"{file_id}.jpg")
+                ]
+                try:
+                    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+                    os.rename(config.STORAGE_DIR / f"{file_id}.jpg", config.STORAGE_DIR / f"{file_id}.preview")
+                    preview_exists = True
+                except FileNotFoundError:
+                    pass
+
             split_filename = file.filename.split(".")
-            filename = f"{split_filename[0][0 : 50 - (len(split_filename[-1]) + 1)]}.{split_filename[-1]}"
+            filename = f"{split_filename[0][0:50 - (len(split_filename[-1]) + 1)]}.{split_filename[-1]}"
 
             await crud.insert_file(
                 id=file_id,
@@ -35,6 +62,7 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
                 mime_type=mime_type,
                 type=file.filename.split(".")[-1],
                 size=file.size,
+                preview=preview_exists,
                 folder_id=folder_id,
             )
 
@@ -84,6 +112,20 @@ async def get_file(file_id: str):
     return FileResponse(config.STORAGE_DIR / file_id, media_type=file_type)
 
 
+@router.get("/files/{file_id}/preview")
+async def get_preview(file_id: str):
+    try:
+        file = await crud.select_file(file_id)
+    except NoResultFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="The file doesn't exist"
+        )
+
+    file_type = file["type"]
+
+    return FileResponse(config.STORAGE_DIR / f"{file_id}.preview", media_type=file_type)
+
+
 @router.get("/files/{file_id}/meta")
 async def get_file_metadata(file_id: str):
     return await crud.select_file(file_id)
@@ -91,7 +133,6 @@ async def get_file_metadata(file_id: str):
 
 @router.patch("/files/{file_id}")
 async def update_file(file_id: str, schema: FileSchema):
-    print(schema.name, schema.folder_id)
     if schema.name and schema.folder_id is None:
         await crud.update_filename(file_id, schema.name)
     elif schema.folder_id and schema.name is None:
@@ -107,5 +148,8 @@ async def delete_file(file_id: str):
         )
 
     os.remove(file_path)
+    preview_path = config.STORAGE_DIR / f"{file_id}.preview"
+    if preview_path.exists():
+        os.remove(preview_path)
 
     await crud.delete_file(file_id)
