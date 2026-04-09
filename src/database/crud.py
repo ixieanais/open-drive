@@ -95,6 +95,15 @@ async def update_filename(id: str, filename: str):
         await session.commit()
 
 
+async def update_file_location(id: str, folder_id: str):
+    async with session_factory() as session:
+        stmt = text("UPDATE files SET folder_id = :folder_id WHERE id = :id").bindparams(
+            id=id, folder_id=folder_id
+        )
+        await session.execute(stmt)
+        await session.commit()
+
+
 async def delete_file(id: str):
     async with session_factory() as session:
         stmt = text("DELETE FROM files WHERE id = :id").bindparams(id=id)
