@@ -89,9 +89,13 @@ async def get_file_metadata(file_id: str):
     return await crud.select_file(file_id)
 
 
-@router.patch("/files/{file_id}", tags=["files"])
-async def update_filename(file_id: str, schema: FileSchema):
-    await crud.update_filename(file_id, schema.name)
+@router.patch("/files/{file_id}")
+async def update_file(file_id: str, schema: FileSchema):
+    print(schema.name, schema.folder_id)
+    if schema.name and schema.folder_id is None:
+        await crud.update_filename(file_id, schema.name)
+    elif schema.folder_id and schema.name is None:
+        await crud.update_file_location(file_id, schema.folder_id)
 
 
 @router.delete("/files/{file_id}")
