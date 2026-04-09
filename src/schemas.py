@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -6,4 +8,5 @@ class FolderSchema(BaseModel):
 
 
 class FileSchema(BaseModel):
-    name: str = Field(min_length=1, max_length=50)
+    name: Optional[str] = Field(default=None, min_length=1, max_length=50)
+    folder_id: Optional[str] = Field(default=None)
