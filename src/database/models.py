@@ -43,3 +43,15 @@ class FilesOrm(Base):
     created_at: Mapped[created_at_dt]
     updated_at: Mapped[updated_at_dt]
     opened_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class FavoritesOrm(Base):
+    __tablename__ = "favorites"
+
+    folder_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("folders.id", ondelete="CASCADE"),
+        unique=True,
+        primary_key=True,
+    )
+    created_at: Mapped[created_at_dt]
