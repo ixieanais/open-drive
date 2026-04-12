@@ -12,4 +12,5 @@ class HomeService(Service):
             "folders": await crud.select_folders(folder_id),
             "files": await crud.select_files(folder_id),
             "disk_usage": await self.get_disk_usage(),
+            "favorites": await crud.select_favorites(),
         }
