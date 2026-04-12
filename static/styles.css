@@ -153,6 +153,83 @@ a {
     background-color: var(--hover-color);
 }
 
+.favorites-buttons-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.favorites-buttons-wrapper .fav-button {
+    height: 40px;
+    background-color: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    gap: 7px;
+    justify-content: start;
+    padding-left: 24px;
+    align-items: center;
+    fill: white;
+    user-select: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+.favorites-buttons-wrapper .fav-button:hover {
+    background-color: var(--hover-color);
+    padding-right: 32px;
+}
+
+.fav-button > svg {
+    min-width: 20px;
+    min-height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+    margin-bottom: 2px;
+}
+
+.fav-button > span {
+    font-size: 16px;
+    max-height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fav-button .fav-delete {
+    position: absolute;
+    right: 0;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    opacity: 0;
+    transition: .1s;
+}
+
+.favorites-buttons-wrapper .fav-button:hover .fav-delete {
+    opacity: 0.3;
+}
+
+.fav-delete:hover {
+    background-color: var(--hover-color);
+    opacity: 1 !important;
+}
+
+.fav-delete > svg {
+    width: 18px;
+    height: 18px;
+}
+
+.fav-button:has(.fav-delete:hover) {
+    background-color: transparent;
+}
+
 .side-bar-line {
     width: 100%;
     height: 1px;

@@ -433,6 +433,32 @@ foldersContextMenu.addEventListener("click", async (e) => {
             window.open(`/api/folders/${contextItem.dataset.id}/download`, "_blank");
             break;
 
+        case "favorites":
+            var response = await createFavorite(contextItem.dataset.id);
+            if (response.status !== 200) return alert("Error");
+
+            var favoritesWrapper = document.querySelector(".favorites-buttons-wrapper");
+            var favoriteButton = document.createElement("button");
+            favoriteButton.className = "fav-button";
+            favoriteButton.dataset.id = contextItem.dataset.id;
+            favoriteButton.addEventListener("click", (e) => {
+                pressFavoriteButton(e);
+            });
+            favoriteButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                <path d="M166.78-140.78q-44.3 0-75.15-30.85-30.85-30.85-30.85-75.15v-466.44q0-44.3 30.85-75.15 30.85-30.85 75.15-30.85h224.74L480-730.74h313.22q44.3 0 75.15 30.85 30.85 30.85 30.85 75.15v377.96q0 44.3-30.85 75.15-30.85 30.85-75.15 30.85H166.78Z"/>
+            </svg>
+            <span>${contextItem.querySelector("span").textContent}</span>
+            <div class="fav-delete" onclick="pressDeleteFavoriteButton(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#ffffff">
+                    <path d="M273.78-100.78q-44.3 0-75.15-30.85-30.85-30.85-30.85-75.15v-507q-22.09 0-37.54-15.46-15.46-15.46-15.46-37.54 0-22.09 15.46-37.55 15.45-15.45 37.54-15.45H347q0-22.09 15.46-37.55 15.45-15.45 37.54-15.45h158.87q22.09 0 37.54 15.45 15.46 15.46 15.46 37.55h180.35q22.09 0 37.54 15.45 15.46 15.46 15.46 37.55 0 22.08-15.46 37.54-15.45 15.46-37.54 15.46v507q0 44.3-30.85 75.15-30.85 30.85-75.15 30.85H273.78Zm155.57-193.26q13.48-13.48 13.48-32.74v-267.57q0-19.26-13.48-32.74t-32.74-13.48q-19.26 0-33.02 13.48-13.76 13.48-13.76 32.74v267.57q0 19.26 13.76 32.74 13.76 13.47 33.02 13.47 19.26 0 32.74-13.47Zm167.35 0q13.47-13.48 13.47-32.74v-267.57q0-19.26-13.47-32.74-13.48-13.48-32.74-13.48t-33.03 13.48q-13.76 13.48-13.76 32.74v267.57q0 19.26 13.76 32.74 13.77 13.47 33.03 13.47t32.74-13.47Z"/>
+                </svg>
+            </div>
+            `;
+            favoritesWrapper.appendChild(favoriteButton);
+
+            break;
+
         case "rename":
             openDialogWindow("rename-folder");
             break;

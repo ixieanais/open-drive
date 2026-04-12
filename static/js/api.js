@@ -196,3 +196,27 @@ async function deleteFolder(folderId) {
     });
     return response.status;
 }
+
+
+
+async function createFavorite(folderId) {
+    const response = await fetch(`/api/favorites/${folderId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    return response;
+}
+
+async function deleteFavorite(folderId) {
+    const response = await fetch(`/api/favorites/${folderId}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    return response;
+}

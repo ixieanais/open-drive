@@ -29,6 +29,21 @@
                     </button>
                 </div>
                 <div class="side-bar-line"></div>
+                <div class="favorites-buttons-wrapper">
+                    {% for favorite in favorites %}
+                    <button class="fav-button" data-id="{{ favorite.id }}" onclick="pressFavoriteButton(event)">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                            <path d="M166.78-140.78q-44.3 0-75.15-30.85-30.85-30.85-30.85-75.15v-466.44q0-44.3 30.85-75.15 30.85-30.85 75.15-30.85h224.74L480-730.74h313.22q44.3 0 75.15 30.85 30.85 30.85 30.85 75.15v377.96q0 44.3-30.85 75.15-30.85 30.85-75.15 30.85H166.78Z"/>
+                        </svg>
+                        <span>{{ favorite.path.split("/")[-1] }}</span>
+                        <div class="fav-delete" onclick="pressDeleteFavoriteButton(event)">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#ffffff">
+                                <path d="M273.78-100.78q-44.3 0-75.15-30.85-30.85-30.85-30.85-75.15v-507q-22.09 0-37.54-15.46-15.46-15.46-15.46-37.54 0-22.09 15.46-37.55 15.45-15.45 37.54-15.45H347q0-22.09 15.46-37.55 15.45-15.45 37.54-15.45h158.87q22.09 0 37.54 15.45 15.46 15.46 15.46 37.55h180.35q22.09 0 37.54 15.45 15.46 15.46 15.46 37.55 0 22.08-15.46 37.54-15.45 15.46-37.54 15.46v507q0 44.3-30.85 75.15-30.85 30.85-75.15 30.85H273.78Zm155.57-193.26q13.48-13.48 13.48-32.74v-267.57q0-19.26-13.48-32.74t-32.74-13.48q-19.26 0-33.02 13.48-13.76 13.48-13.76 32.74v267.57q0 19.26 13.76 32.74 13.76 13.47 33.02 13.47 19.26 0 32.74-13.47Zm167.35 0q13.47-13.48 13.47-32.74v-267.57q0-19.26-13.47-32.74-13.48-13.48-32.74-13.48t-33.03 13.48q-13.76 13.48-13.76 32.74v267.57q0 19.26 13.76 32.74 13.77 13.47 33.03 13.47t32.74-13.47Z"/>
+                            </svg>
+                        </div>
+                    </button>
+                    {% endfor %}
+                </div>
                 <div class="disk-wrapper">
                     <div class="disk-container">
                         <div class="disk-bar">
@@ -132,7 +147,7 @@
     </div>
     <div id="folders-context-menu" class="context-menu">
         <div class="context-item" data-action="download">Download</div>
-        <!-- <div class="context-item" data-action="favorites">Add to favorites</div> -->
+        <div class="context-item" data-action="favorites">Add to favorites</div>
         <div class="context-item" data-action="rename">Rename</div>
         <!-- <div class="context-item" data-action="move">Move to</div> -->
         <div class="context-item" data-action="delete">Delete</div>
@@ -144,6 +159,7 @@
     <script src="{{ url_for('static', path='/js/api.js') }}"></script>
     <script src="{{ url_for('static', path='/js/search.js') }}"></script>
     <script src="{{ url_for('static', path='/js/storage.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/favorites.js') }}"></script>
     <script src="{{ url_for('static', path='/js/main.js') }}"></script>
 </body>
 </html>
