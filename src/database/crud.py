@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 from sqlalchemy import text
 
-from database.models import Base, FilesOrm, FoldersOrm
+from database.models import Base, FilesOrm, FoldersOrm, FavoritesOrm
 
 from .database import engine, session_factory
 
@@ -99,9 +99,9 @@ async def update_filename(id: str, filename: str):
 
 async def update_file_location(id: str, folder_id: str):
     async with session_factory() as session:
-        stmt = text("UPDATE files SET folder_id = :folder_id WHERE id = :id").bindparams(
-            id=id, folder_id=folder_id
-        )
+        stmt = text(
+            "UPDATE files SET folder_id = :folder_id WHERE id = :id"
+        ).bindparams(id=id, folder_id=folder_id)
         await session.execute(stmt)
         await session.commit()
 
@@ -203,5 +203,34 @@ async def update_folder(id: str, path: str):
 async def delete_folder(id: str):
     async with session_factory() as session:
         stmt = text("DELETE FROM folders WHERE id = :id").bindparams(id=id)
+        await session.execute(stmt)
+        await session.commit()
+
+
+async def insert_favorite(folder_id: str):
+    async with session_factory() as session:
+        favorite = FavoritesOrm(folder_id=folder_id)
+        session.add(favorite)
+        await session.commit()
+
+
+async def select_favorites() -> Union[list[dict], list]:
+    async with session_factory() as session:
+        stmt = text("""
+            SELECT folders.*
+            FROM folders
+            INNER JOIN favorites ON folders.id = favorites.folder_id
+            ORDER BY favorites.created_at ASC
+        """)
+        result = await session.execute(stmt)
+        rows = result.mappings().all()
+        return [dict(row) for row in rows]
+
+
+async def delete_favorite(folder_id: str):
+    async with session_factory() as session:
+        stmt = text("DELETE FROM favorites WHERE folder_id = :folder_id").bindparams(
+            folder_id=folder_id
+        )
         await session.execute(stmt)
         await session.commit()
