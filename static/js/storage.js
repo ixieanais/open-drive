@@ -589,10 +589,8 @@ filesContextMenu.addEventListener("click", async (e) => {
 });
 
 
-fileInput.addEventListener("change", async (e) => {
-    const files = e.target.files;
-
-    const uploadInformation = document.createElement("div")
+async function uploadFiles(files) {
+    const uploadInformation = document.createElement("div");
     uploadInformation.className = "upload-information";
     uploadInformation.innerHTML = `
     <span>Uploading...</span>
@@ -605,8 +603,14 @@ fileInput.addEventListener("change", async (e) => {
         formData.append("files", file);
     }
 
-    const response = uploadFile(document.querySelector(".data-div").dataset.folderId, formData);
-    if (response.detail !== "Done") return;
+    const response = await uploadFile(document.querySelector(".data-div").dataset.folderId, formData);
+}
+
+
+fileInput.addEventListener("change", async (e) => {
+    const files = e.target.files;
+
+    await uploadFiles(files);
 });
 
 
@@ -615,4 +619,19 @@ backgroundWrapper.addEventListener("click", async (e) => {
         backgroundWrapper.style.display = "none";
         backgroundContainer.innerHTML = "";
     }
+});
+
+document.getElementById("dropZone").addEventListener("dragover", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+});
+
+document.getElementById("dropZone").addEventListener("drop", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const files = e.dataTransfer.files;
+    if (!files.length) return;
+
+    await uploadFiles(files);
 });

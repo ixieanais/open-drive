@@ -11,6 +11,13 @@ async function uploadFile(folderId, formData) {
                 uploadInformation.remove();
                 location.reload();
             }, 1000);
+        } else {
+            const uploadInformation = document.querySelector(".upload-information");
+            uploadInformation.style.opacity = "0";
+            setTimeout(async () => {
+                uploadInformation.remove();
+            }, 1000);
+            return alert(`Error ${xhr.status}`)
         }
     }
 
