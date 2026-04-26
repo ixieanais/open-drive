@@ -1,10 +1,13 @@
+from fastapi import Request
+
 from database import crud
 
 from .service import Service
 
 
 class FolderService(Service):
-    def __init__(self, folder_id):
+    def __init__(self, request: Request, folder_id):
+        self.request = request
         self.folder_id = folder_id
 
     async def get_context(self):

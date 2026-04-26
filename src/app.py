@@ -39,7 +39,7 @@ async def root_page():
 
 @app.get("/home", tags=["pages"])
 async def home_page(request: Request):
-    service = HomeService()
+    service = HomeService(request)
     return tempaltes.TemplateResponse(
         request=request, name="index.html", context=await service.get_context()
     )
@@ -53,7 +53,7 @@ async def folder_page(request: Request, folder_id: str):
     if await crud.is_main_folder(folder_id):
         return RedirectResponse("/home")
 
-    service = FolderService(folder_id)
+    service = FolderService(request, folder_id)
     return tempaltes.TemplateResponse(
         request=request, name="index.html", context=await service.get_context()
     )
