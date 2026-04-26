@@ -79,7 +79,8 @@ async def get_folders(parent_id: str):
 @router.get("/folders/{folder_id}/files/total")
 async def get_folder_total_files(folder_id: str):
     files = await get_files_from_folders(list(), folder_id)
-    return len(files)
+    total_size = sum(file["size"] for file in files)
+    return total_size, len(files)
 
 
 @router.get("/folders/{folder_id}/metadata")

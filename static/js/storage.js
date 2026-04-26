@@ -97,12 +97,13 @@ async function openPropertiesWindow(itemType, item) {
             var folderPath = folder.path;
             var lastPathItemLength = folderPath.split("/").at(-1).length * -1;
             var parentFolder = folderPath.slice(0, lastPathItemLength);
+            var filesMetadata = await getFolderTotalFiles(dataDiv.dataset.folderId);
 
             propertiesWindow.className = "properties-wrapper";
             propertiesWindow.innerHTML = `
             <div class="properties-window">
                 <span class="folder-name">${folderPath.split("/").at(-1)}</span>
-                <span class="folder-span-info">${await getFolderTotalFiles(dataDiv.dataset.folderId)} item(s)</span>
+                <span class="folder-span-info">${filesMetadata[1]} item(s), totalling ${formatBytes(filesMetadata[0])}</span>
                 <div class="folder-info">
                     <div class="folder-item">
                         <span class="folder-item-span">Parent Folder</span>
@@ -132,11 +133,13 @@ async function openPropertiesWindow(itemType, item) {
             var folderPath = folder.path;
             var lastPathItemLength = folderPath.split("/").at(-1).length * -1;
             var parentFolder = folderPath.slice(0, lastPathItemLength);
+            var filesMetadata = await getFolderTotalFiles(contextItem.dataset.id);
+
             propertiesWindow.className = "properties-wrapper";
             propertiesWindow.innerHTML = `
             <div class="properties-window">
                 <span class="folder-name">${folderPath.split("/").at(-1)}</span>
-                <span class="folder-span-info">${await getFolderTotalFiles(contextItem.dataset.id)} item(s)</span>
+                <span class="folder-span-info">${filesMetadata[1]} item(s), totalling ${formatBytes(filesMetadata[0])}</span>
                 <div class="folder-info">
                     <div class="folder-item">
                         <span class="folder-item-span">Parent Folder</span>
