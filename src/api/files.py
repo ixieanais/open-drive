@@ -52,8 +52,8 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
 
                 cmd = [
                     "ffmpeg",
-                    "-i", str(config.STORAGE_DIR / file_id),
                     "-ss", str(timestamp),
+                    "-i", str(config.STORAGE_DIR / file_id),
                     "-vframes", "1",
                     "-vf", "scale=300:-1",
                     str(config.STORAGE_DIR / f"{file_id}.jpg")
