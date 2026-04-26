@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 from uuid import uuid4
@@ -6,8 +7,8 @@ import aiofiles
 from fastapi import APIRouter, File, UploadFile, status
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse
-from sqlalchemy.exc import IntegrityError, NoResultFound
 from PIL import Image
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
 import config
 from database import crud
@@ -38,10 +39,21 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
                     img.save(config.STORAGE_DIR / f"{file_id}.preview", format="JPEG", quality=70)
 
             elif mime_type.startswith("video/"):
+                result = subprocess.run([
+                    "ffprobe",
+                    "-v", "quiet",
+                    "-print_format", "json",
+                    "-show_format",
+                    str(config.STORAGE_DIR / file_id)
+                ], capture_output=True, text=True)
+
+                duration = float(json.loads(result.stdout)["format"]["duration"])
+                timestamp = duration / 2
+
                 cmd = [
                     "ffmpeg",
                     "-i", str(config.STORAGE_DIR / file_id),
-                    "-ss", "00:00:0.000",
+                    "-ss", str(timestamp),
                     "-vframes", "1",
                     "-vf", "scale=300:-1",
                     str(config.STORAGE_DIR / f"{file_id}.jpg")
