@@ -10,3 +10,4 @@ SQLAlchemy==2.0.48
 SQLAlchemy-Utils==0.42.1
 uvicorn==0.42.0
 pillow==12.2.0
+icoextract==0.2.0
