@@ -4,6 +4,7 @@ import subprocess
 from uuid import uuid4
 
 import aiofiles
+from icoextract import IconExtractor, IconExtractorError
 from fastapi import APIRouter, File, UploadFile, status
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse
@@ -63,6 +64,14 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
                     os.rename(config.STORAGE_DIR / f"{file_id}.jpg", config.STORAGE_DIR / f"{file_id}.preview")
                     preview_exists = True
                 except FileNotFoundError:
+                    pass
+
+            elif mime_type == "application/x-msdownload":
+                try:
+                    extractor = IconExtractor(config.STORAGE_DIR / file_id)
+                    extractor.export_icon(config.STORAGE_DIR / f"{file_id}.preview")
+                    preview_exists = True
+                except IconExtractorError:
                     pass
 
             split_filename = file.filename.split(".")
