@@ -503,6 +503,12 @@ async function openFile(file) {
 
     switch (fileGroup) {
         case "image":
+            if (fileType == "image/svg+xml") {
+                element = document.createElement("svg");
+                element.innerHTML = await getFile(fileId);
+                element.className = "background-div";
+                break;
+            }
             element = document.createElement("img");
             element.className = "background-div";
             element.src = fileSource;

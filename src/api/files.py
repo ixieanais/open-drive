@@ -31,7 +31,7 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
                 while chunk := await file.read(1024 * 1024):
                     await f.write(chunk)
 
-            if mime_type.startswith("image/"):
+            if mime_type.startswith("image/") and mime_type != "image/svg+xml":
                 preview_exists = True
                 with Image.open(config.STORAGE_DIR / file_id) as img:
                     img.thumbnail((512, 512))

@@ -94,7 +94,7 @@
                     <div class="files-grid">
                         {% for file in files %}
                         <div class="item files" data-id="{{ file.id }}" data-size="{{ file.size }}" data-mime-type="{{ file.mime_type }}" data-item-type="file">
-                            {% if "image/" in file.mime_type %}
+                            {% if "image/" in file.mime_type and file.mime_type != "image/svg+xml" %}
                                 <div class="image-container">
                                     {% if not file.preview %}
                                         <img src="/api/files/{{ file.id }}" alt="" draggable="false">
