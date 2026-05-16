@@ -74,8 +74,8 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
                 except IconExtractorError:
                     pass
 
-            split_filename = file.filename.split(".")
-            filename = f"{split_filename[0][0:50 - (len(split_filename[-1]) + 1)]}.{split_filename[-1]}"
+            splitted_filename = file.filename.split(".")
+            filename = f"{'.'.join(splitted_filename)[:-1][0:50 - len(splitted_filename[-1])]}.{splitted_filename[-1]}"
 
             await crud.insert_file(
                 id=file_id,
