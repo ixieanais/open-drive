@@ -16,7 +16,9 @@ makedirs(TEMPDIR, exist_ok=True)
 
 tempfile.tempdir = TEMPDIR
 
-load_dotenv(PARENT_DIR / ".env")
+is_loaded = load_dotenv(PARENT_DIR / ".env")
+if not is_loaded:
+    raise FileNotFoundError("The .env file does not exist")
 
 DATABASE_URL = f"postgresql+asyncpg://{getenv('DB_USER')}:{getenv('DB_PASS')}@{getenv('DB_HOST')}:{getenv('DB_PORT')}/{getenv('DB_NAME')}"
 DATABASE_URL_UTILS = DATABASE_URL.replace("asyncpg", "psycopg")
