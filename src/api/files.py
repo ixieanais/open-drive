@@ -25,6 +25,8 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
         file_id = str(uuid4())
         mime_type = file.content_type
         preview_exists = False
+        splitted_filename = file.filename.split(".")
+        filename = f"{'.'.join(splitted_filename[:-1])[0:50 - len(splitted_filename[-1])]}.{splitted_filename[-1]}"
 
         try:
             async with aiofiles.open(config.STORAGE_DIR / file_id, "wb") as f:
@@ -74,9 +76,6 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
                 except IconExtractorError:
                     pass
 
-            splitted_filename = file.filename.split(".")
-            filename = f"{'.'.join(splitted_filename)[:-1][0:50 - len(splitted_filename[-1])]}.{splitted_filename[-1]}"
-
             await crud.insert_file(
                 id=file_id,
                 filename=filename,
@@ -88,6 +87,10 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
             )
 
         except IntegrityError:
+            os.remove(config.STORAGE_DIR / file_id)
+            if preview_exists:
+                os.remove(config.STORAGE_DIR / f"{file_id}.preview")
+
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=f"The file ({filename}) exists",
