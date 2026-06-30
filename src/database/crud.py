@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 from sqlalchemy import text
 
-from database.models import Base, FilesOrm, FoldersOrm, FavoritesOrm
+from database.models import Base, FavoritesOrm, FilesOrm, FoldersOrm
 
 from .database import engine, session_factory
 
@@ -193,10 +193,28 @@ async def is_main_folder(id: str) -> bool:
 
 async def update_folder(id: str, path: str):
     async with session_factory() as session:
-        stmt = text("UPDATE folders SET path = :path WHERE id = :id").bindparams(
-            id=id, path=path
+        old_folder = await session.execute(
+            text("SELECT path FROM folders WHERE id = :id").bindparams(id=id)
         )
-        await session.execute(stmt)
+        old_path = old_folder.scalar_one()
+
+        await session.execute(
+            text("UPDATE folders SET path = :path WHERE id = :id").bindparams(
+                id=id, path=path
+            )
+        )
+
+        await session.execute(
+            text("""
+                UPDATE folders
+                SET path = :new_path || substr(path, :old_len + 1)
+                WHERE path LIKE :like_pattern
+            """).bindparams(
+                new_path=path,
+                old_len=len(old_path),
+                like_pattern=f"{old_path}/%",
+            )
+        )
         await session.commit()
 
 
