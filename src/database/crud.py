@@ -85,7 +85,7 @@ async def select_file_type(id: str) -> Optional[str]:
         stmt = text("SELECT type FROM files WHERE id = :id").bindparams(id=id)
         result = await session.execute(stmt)
         row = result.first()
-        return row[0] if row[0] else None
+        return row[0] if row else None
 
 
 async def update_filename(id: str, filename: str):
