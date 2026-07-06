@@ -25,8 +25,14 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
         file_id = str(uuid4())
         mime_type = file.content_type
         preview_exists = False
-        splitted_filename = file.filename.split(".")
-        filename = f"{'.'.join(splitted_filename[:-1])[0:50 - len(splitted_filename[-1])]}.{splitted_filename[-1]}"
+        name, ext = file.filename.rsplit(".", 1)
+        filename = f"{name[0 : config.MAX_SYMBOLS_AMOUNT - 1 - len(ext)]}.{ext}"
+        print(filename)
+        if count := await crud.files_count_by_filename(filename, folder_id):
+            old_filename = filename
+            filename = f"{name[0 : config.MAX_SYMBOLS_AMOUNT - len(ext) - len(str(count)) - 4]} ({count}).{ext}"
+            if old_filename == filename:
+                pass
 
         try:
             async with aiofiles.open(config.STORAGE_DIR / file_id, "wb") as f:
