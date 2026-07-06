@@ -247,6 +247,7 @@ a {
     bottom: 10px;
     right: 20px;
     width: auto;
+    max-width: calc(100vw - 190px);
     border-radius: 14px;
     background-color: rgb(57, 57, 57);
     display: flex;
@@ -254,6 +255,10 @@ a {
     padding: 6px 12px;
     gap: 6px;
     user-select: none;
+}
+
+.item-information span {
+    word-break:break-all;
 }
 
 .item-information .vertical-line {
@@ -492,6 +497,13 @@ a {
     border-radius: 4px;
     padding: 6px 8px;
     width: 240px;
+}
+
+.dialog-input-text {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translate(-50%);
 }
 
 .dialog-buttons {

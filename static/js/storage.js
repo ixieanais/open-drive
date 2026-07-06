@@ -251,37 +251,56 @@ function openContextMenu(type, event, item) {
 function openDialogWindow(purpose) {
     let dialogSpanText;
     let yesButtonText;
+    let input_exists = false;
     let inputValue = "";
+    let inputText = "";
 
     switch (purpose) {
         case "create-folder":
             dialogSpanText = "New folder";
             yesButtonText = "Create";
+            input_exists = true;
             break;
 
         case "rename-folder":
             dialogSpanText = "Rename folder";
             yesButtonText = "Rename";
             inputValue = contextItem.querySelector("span").textContent;
+            input_exists = true;
             break;
 
         case "rename-file":
             dialogSpanText = "Rename file";
             yesButtonText = "Rename";
             inputValue = contextItem.querySelector("span").textContent;
+            input_exists = true;
             break;
 
         case "move-file":
             dialogSpanText = "Move file";
             yesButtonText = "Move";
             inputValue = dataDiv.dataset.folderPath;
+            input_exists = true;
+            break;
+
+        case "delete-folder":
+            dialogSpanText = "Delete folder";
+            yesButtonText = "Delete";
+            inputText = `<span class="dialog-input-text">Are you sure?</span>`
+            break;
+
+        case "delete-file":
+            dialogSpanText = "Delete file";
+            yesButtonText = "Delete";
+            inputText = `<span class="dialog-input-text">Are you sure?</span>`
             break;
     }
-
+    input = input_exists ? `<input type="text" class="dialog-input" value="${inputValue}">` : inputText;
+    
     dialogWindow.dataset.purpose = purpose;
     dialogWindow.innerHTML = `
     <span class="dialog-span">${dialogSpanText}</span>
-    <input type="text" class="dialog-input" value="${inputValue}">
+    ${input}
     <div class="dialog-buttons">
         <button data-action="no" class="dialog no">Cancel</button>
         <button data-action="yes" class="dialog yes">${yesButtonText}</button>
@@ -379,6 +398,32 @@ dialogWindow.addEventListener("click", async (e) => {
 
                     break;
 
+                case "delete-folder":
+                    var status = await deleteFolder(contextItem.dataset.id);
+                    if (status === 200) {
+                        contextItem.remove();
+                        var foldersGrid = document.querySelector(".folders-grid");
+                        if (foldersGrid) {
+                            const items = foldersGrid.querySelectorAll(".item").length;
+                            if (items === 0) {
+                                foldersGrid.remove();
+                            }
+                        }
+                        unrenderItemInformation();
+                    } else {
+                        alert("Error");
+                    }
+                    break;
+
+                case "delete-file":
+                    var status = await deleteFile(filesContextMenu.dataset.id);
+                    if (status === 200) {
+                        contextItem.remove();
+                        unrenderItemInformation();
+                    } else {
+                        alert("Error");
+                    }
+                    break;
             }
             dialogWrapper.style.display = "none";
             dialogWindow.innerHTML = "";
@@ -467,20 +512,7 @@ foldersContextMenu.addEventListener("click", async (e) => {
             break;
 
         case "delete":
-            const status = await deleteFolder(contextItem.dataset.id);
-            if (status === 200) {
-                contextItem.remove();
-                var foldersGrid = document.querySelector(".folders-grid");
-                if (foldersGrid) {
-                    const items = foldersGrid.querySelectorAll(".item").length;
-                    if (items === 0) {
-                        foldersGrid.remove();
-                    }
-                }
-                unrenderItemInformation();
-            } else {
-                alert("Error");
-            }
+            openDialogWindow("delete-folder");
             break;
 
         case "properties":
@@ -582,13 +614,7 @@ filesContextMenu.addEventListener("click", async (e) => {
             break;
 
         case "delete":
-            var status = await deleteFile(filesContextMenu.dataset.id);
-            if (status === 200) {
-                contextItem.remove();
-                unrenderItemInformation();
-            } else {
-                alert("Error");
-            }
+            openDialogWindow("delete-file");
             break;
 
         case "properties":
@@ -609,6 +635,7 @@ async function uploadFiles(files) {
 
     const formData = new FormData();
     for (let file of files) {
+        console.log(file.name)
         formData.append("files", file);
     }
 
