@@ -22,3 +22,5 @@ if not is_loaded:
 
 DATABASE_URL = f"postgresql+asyncpg://{getenv('DB_USER')}:{getenv('DB_PASS')}@{getenv('DB_HOST')}:{getenv('DB_PORT')}/{getenv('DB_NAME')}"
 DATABASE_URL_UTILS = DATABASE_URL.replace("asyncpg", "psycopg")
+
+MAX_SYMBOLS_AMOUNT = 96
