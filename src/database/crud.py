@@ -1,10 +1,12 @@
+import re
 from typing import Optional, Union
 
 from sqlalchemy import text
 
-from database.models import Base, FavoritesOrm, FilesOrm, FoldersOrm
+import config
 
 from .database import engine, session_factory
+from .models import Base, FavoritesOrm, FilesOrm, FoldersOrm
 
 
 async def create_tables():
@@ -86,6 +88,27 @@ async def select_file_type(id: str) -> Optional[str]:
         result = await session.execute(stmt)
         row = result.first()
         return row[0] if row else None
+
+
+async def files_count_by_filename(filename: str, folder_id: str) -> int:
+    async with session_factory() as session:
+        base_name = filename.rsplit(".", 1)[0]
+        pattern = f"{base_name}%"
+        match = re.search(r'\((\d+)\)$', base_name)
+        if match:
+            pattern = f"{base_name[:match.start()].rstrip()}%"
+        else:
+            if len(filename) == config.MAX_SYMBOLS_AMOUNT:
+                pattern = f"{base_name[0:-5]}%"
+
+        stmt = text("""
+            SELECT COUNT(*)
+            FROM files
+            WHERE folder_id = :folder_id AND (filename = :filename OR filename LIKE :pattern)
+        """).bindparams(folder_id=folder_id, filename=filename, pattern=pattern)
+        result = await session.execute(stmt)
+        row = result.first()
+        return row[0] if row else 0
 
 
 async def update_filename(id: str, filename: str):
