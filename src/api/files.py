@@ -27,7 +27,6 @@ async def upload_files(folder_id: str, files: list[UploadFile] = File(...)):
         preview_exists = False
         name, ext = file.filename.rsplit(".", 1)
         filename = f"{name[0 : config.MAX_SYMBOLS_AMOUNT - 1 - len(ext)]}.{ext}"
-        print(filename)
         if count := await crud.files_count_by_filename(filename, folder_id):
             old_filename = filename
             filename = f"{name[0 : config.MAX_SYMBOLS_AMOUNT - len(ext) - len(str(count)) - 4]} ({count}).{ext}"
