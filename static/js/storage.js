@@ -254,6 +254,7 @@ function openDialogWindow(purpose) {
     let input_exists = false;
     let inputValue = "";
     let inputText = "";
+    let inputMaxLength;
 
     switch (purpose) {
         case "create-folder":
@@ -266,6 +267,7 @@ function openDialogWindow(purpose) {
             dialogSpanText = "Rename folder";
             yesButtonText = "Rename";
             inputValue = contextItem.querySelector("span").textContent;
+            inputMaxLength = 96;
             input_exists = true;
             break;
 
@@ -273,6 +275,7 @@ function openDialogWindow(purpose) {
             dialogSpanText = "Rename file";
             yesButtonText = "Rename";
             inputValue = contextItem.querySelector("span").textContent;
+            inputMaxLength = 96;
             input_exists = true;
             break;
 
@@ -295,7 +298,7 @@ function openDialogWindow(purpose) {
             inputText = `<span class="dialog-input-text">Are you sure?</span>`
             break;
     }
-    input = input_exists ? `<input type="text" class="dialog-input" value="${inputValue}">` : inputText;
+    let input = input_exists ? `<input type="text" class="dialog-input" value="${inputValue}" maxlength="${inputMaxLength}">` : inputText;
     
     dialogWindow.dataset.purpose = purpose;
     dialogWindow.innerHTML = `
