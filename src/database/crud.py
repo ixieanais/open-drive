@@ -20,7 +20,7 @@ async def insert_file(
     filename: str,
     mime_type: Optional[str],
     type: Optional[str],
-    size: str,
+    size: int,
     preview: bool,
     folder_id: str,
 ):
